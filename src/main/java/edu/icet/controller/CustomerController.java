@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@CrossOrigin
 @RestController
 @RequestMapping("/customer")
 
@@ -23,5 +26,13 @@ public class CustomerController {
     @PostMapping("/add")
     public String addCustomer(@RequestBody CustomerDTO customerDTO){
         return customerService.addCustomer(customerDTO);
+    }
+    @GetMapping("/search/{id}")
+    public CustomerDTO searchCustomer(@PathVariable("id") int id){
+        return customerService.searchCustomer(id);
+    }
+    @GetMapping("/all")
+    public List<CustomerDTO> getAllCustomers() {
+        return customerService.getAllCustomers();
     }
 }
