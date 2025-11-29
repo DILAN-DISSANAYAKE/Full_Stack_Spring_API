@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,7 +65,7 @@ public class CustomerService {
     public String updateCustomer(CustomerDTO customerDTO, String id) {
         List<Customer> customers=customerRepository.findAll();
         for(Customer customer:customers){
-           if(customer.getCustomer_id()==id){
+           if(customer.getCustomer_id().equals(id)){
                customerRepository.save(new Customer(
                   id,
                   customerDTO.getName(),
