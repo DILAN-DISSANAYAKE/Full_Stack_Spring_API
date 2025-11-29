@@ -15,10 +15,12 @@ public class CustomerService {
     final CustomerRepository customerRepository;
     public String addCustomer(CustomerDTO customerDTO) {
         List<Customer> customers=customerRepository.findAll();
-        int genaratedId=1;
+        String genaratedId="C001";
+        int genIntId=1;
         for(Customer customer:customers){
-            if(customer.getCustomer_id()==genaratedId){
-                genaratedId++;
+            if(customer.getCustomer_id().equals(genaratedId)){
+                genIntId++;
+                genaratedId=String.format("C%03d",genIntId);
             }else{break;}
         }
         Customer customer = new Customer(
@@ -33,9 +35,15 @@ public class CustomerService {
         return "Customer Added Successfully..!";
     }
 
-    public CustomerDTO searchCustomer(int id) {
+    public CustomerDTO searchCustomer(String id) {
         Customer customer=customerRepository.findById(id).orElse(null);
-        return customer!=null? new CustomerDTO(id, customer.getName(), customer.getAddress(), customer.getContact(), customer.getImg()):null;
+        if(customer!=null){
+            return new CustomerDTO(id, customer.getName(), customer.getAddress(), customer.getContact(), customer.getImg());
+        }else{
+            CustomerDTO customerDTO=new CustomerDTO();
+            customerDTO.setName("No Data");
+            return customerDTO;
+        }
     }
 
     public List<CustomerDTO> getAllCustomers() {
@@ -51,5 +59,33 @@ public class CustomerService {
             ));
         }
         return customerDTOS;
+    }
+
+    public String updateCustomer(CustomerDTO customerDTO, String id) {
+        List<Customer> customers=customerRepository.findAll();
+        for(Customer customer:customers){
+           if(customer.getCustomer_id()==id){
+               customerRepository.save(new Customer(
+                  id,
+                  customerDTO.getName(),
+                  customerDTO.getAddress(),
+                  customerDTO.getContact(),
+                  customerDTO.getImg()
+               ));
+               return "Customer Updated Successfully..!";
+           }
+        }
+        return "Customer Doesn't Exist..!";
+    }
+
+    public String deleteCustomer(String id) {
+        List<Customer> customers=customerRepository.findAll();
+        for(Customer customer:customers){
+            if(customer.getCustomer_id().equals(id)){
+                customerRepository.deleteById(id);
+                return "Customer Deleted Successfully..!";
+            }
+        }
+        return "Customer Doesn't Exist..!";
     }
 }

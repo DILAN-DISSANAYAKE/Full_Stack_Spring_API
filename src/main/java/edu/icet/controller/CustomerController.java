@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin
+//@CrossOrigin
+
 @RestController
 @RequestMapping("/customer")
 
@@ -16,23 +17,26 @@ import java.util.List;
 
 public class CustomerController {
 
-    final CustomerService customerService;
-
-//    CustomerController(CustomerService customerService){
-//        this.customerService=customerService;
-//
-//    }
+    private final CustomerService customerService;
 
     @PostMapping("/add")
     public String addCustomer(@RequestBody CustomerDTO customerDTO){
         return customerService.addCustomer(customerDTO);
     }
     @GetMapping("/search/{id}")
-    public CustomerDTO searchCustomer(@PathVariable("id") int id){
+    public CustomerDTO searchCustomer(@PathVariable("id") String id){
         return customerService.searchCustomer(id);
     }
     @GetMapping("/all")
     public List<CustomerDTO> getAllCustomers() {
         return customerService.getAllCustomers();
+    }
+    @PostMapping("/update/{id}")
+    public String updateCustoemer(@RequestBody CustomerDTO customerDTO,@PathVariable("id") String id){
+        return customerService.updateCustomer(customerDTO,id);
+    }
+    @GetMapping("/delete/{id}")
+    public String deleteCustomer(@PathVariable("id") String id){
+        return customerService.deleteCustomer(id);
     }
 }
