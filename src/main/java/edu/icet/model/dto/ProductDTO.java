@@ -8,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class ProductDTO {
-    private String product_id;
+    private String productId;
     private String name;
-    private String price;
-    private String qty;
+    private double price;
+    private int qty;
     private String img;
 }
