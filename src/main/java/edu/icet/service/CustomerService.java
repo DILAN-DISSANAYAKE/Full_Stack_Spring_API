@@ -18,7 +18,7 @@ public class CustomerService {
         String genaratedId="C001";
         int genIntId=1;
         for(Customer customer:customers){
-            if(customer.getCustomer_id().equals(genaratedId)){
+            if(customer.getCustomerId().equals(genaratedId)){
                 genIntId++;
                 genaratedId=String.format("C%03d",genIntId);
             }else{break;}
@@ -51,7 +51,7 @@ public class CustomerService {
         List<CustomerDTO> customerDTOS=new ArrayList<>();
         for(Customer customer:customers){
             customerDTOS.add(new CustomerDTO(
-                    customer.getCustomer_id(),
+                    customer.getCustomerId(),
                     customer.getName(),
                     customer.getAddress(),
                     customer.getContact(),
@@ -64,7 +64,7 @@ public class CustomerService {
     public String updateCustomer(CustomerDTO customerDTO, String id) {
         List<Customer> customers=customerRepository.findAll();
         for(Customer customer:customers){
-           if(customer.getCustomer_id().equals(id)){
+           if(customer.getCustomerId().equals(id)){
                customerRepository.save(new Customer(
                   id,
                   customerDTO.getName(),
@@ -81,7 +81,7 @@ public class CustomerService {
     public String deleteCustomer(String id) {
         List<Customer> customers=customerRepository.findAll();
         for(Customer customer:customers){
-            if(customer.getCustomer_id().equals(id)){
+            if(customer.getCustomerId().equals(id)){
                 customerRepository.deleteById(id);
                 return "Customer Deleted Successfully..!";
             }

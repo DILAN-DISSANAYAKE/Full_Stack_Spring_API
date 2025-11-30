@@ -10,14 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
 @Entity
-public class Customer {
+public class Product {
     @Id
-    @Column(name = "customer_id")
-    private String customerId;
+    @Column(name = "product_id")
+    private String productId;
     private String name;
-    private String address;
-    private String contact;
+    private double price;
+    private int qty;
     private String img;
 }

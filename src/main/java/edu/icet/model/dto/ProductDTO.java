@@ -7,12 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CustomerDTO {
-
-    private String customerId;
+public class ProductDTO {
+    private String productId;
     private String name;
-    private String address;
-    private String contact;
+    private double price;
+    private int qty;
     private String img;
-
 }

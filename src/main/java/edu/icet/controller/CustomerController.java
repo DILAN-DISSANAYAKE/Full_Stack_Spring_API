@@ -30,7 +30,7 @@ public class CustomerController {
         return customerService.getAllCustomers();
     }
     @PostMapping("/update/{id}")
-    public String updateCustoemer(@RequestBody CustomerDTO customerDTO,@PathVariable("id") String id){
+    public String updateCustomer(@RequestBody CustomerDTO customerDTO, @PathVariable("id") String id){
         return customerService.updateCustomer(customerDTO,id);
     }
     @GetMapping("/delete/{id}")
