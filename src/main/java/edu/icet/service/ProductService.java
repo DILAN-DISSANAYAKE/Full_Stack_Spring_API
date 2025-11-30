@@ -18,7 +18,7 @@ public class ProductService {
         String genaratedId="P001";
         int genIntId=1;
         for(Product product:products){
-            if(product.getProduct_id().equals(genaratedId)){
+            if(product.getProductId().equals(genaratedId)){
                 genIntId++;
                 genaratedId=String.format("P%03d",genIntId);
             }else{break;}
@@ -48,23 +48,23 @@ public class ProductService {
 
     public List<ProductDTO> getAllProducts() {
         List<Product> products=productRepository.findAll();
-        List<ProductDTO> customerDTOS=new ArrayList<>();
+        List<ProductDTO> productsDTOs=new ArrayList<>();
         for(Product product:products){
-            customerDTOS.add(new ProductDTO(
-                    product.getProduct_id(),
+            productsDTOs.add(new ProductDTO(
+                    product.getProductId(),
                     product.getName(),
                     product.getPrice(),
                     product.getQty(),
                     product.getImg()
             ));
         }
-        return customerDTOS;
+        return productsDTOs;
     }
 
     public String updateProduct(ProductDTO productDTO, String id) {
         List<Product> products=productRepository.findAll();
         for(Product product:products){
-           if(product.getProduct_id().equals(id)){
+           if(product.getProductId().equals(id)){
                productRepository.save(new Product(
                   id,
                   productDTO.getName(),
@@ -81,7 +81,7 @@ public class ProductService {
     public String deleteProduct(String id) {
         List<Product> products=productRepository.findAll();
         for(Product product:products){
-            if(product.getProduct_id().equals(id)){
+            if(product.getProductId().equals(id)){
                 productRepository.deleteById(id);
                 return "Product Deleted Successfully..!";
             }
