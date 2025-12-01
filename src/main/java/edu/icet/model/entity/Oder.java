@@ -11,12 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Entity
-public class Customer {
+public class Oder {
     @Id
-    @Column(name = "customer_id")
-    private String customerId;
-    private String name;
-    private String address;
-    private String contact;
-    private String img;
+    @Column(name = "oder_id")
+    private String oderId;
 }

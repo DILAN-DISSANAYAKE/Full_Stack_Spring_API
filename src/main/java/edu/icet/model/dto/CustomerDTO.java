@@ -8,11 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class CustomerDTO {
-
     private String customerId;
     private String name;
     private String address;
     private String contact;
     private String img;
-
 }

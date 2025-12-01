@@ -21,7 +21,6 @@ public class ProductController {
     public String addProduct(@RequestBody ProductDTO productDTO) {
         return productService.addProduct(productDTO);
     }
-
     @GetMapping("/search/{id}")
     public ProductDTO searchProduct(@PathVariable("id") String id) {
         return productService.searchProduct(id);
