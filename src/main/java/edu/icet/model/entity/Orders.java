@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
@@ -19,4 +19,12 @@ public class Orders {
     @JoinColumn(name = "customer_id")
     private Customer customerId;
     private LocalDate orderDate;
+    @OneToMany(mappedBy = "ordersId",cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<OrderDetails> orderDetailsList;
+
+    public Orders(String orderId, Customer customerId, LocalDate orderDate) {
+        this.orderId = orderId;
+        this.customerId = customerId;
+        this.orderDate = orderDate;
+    }
 }
