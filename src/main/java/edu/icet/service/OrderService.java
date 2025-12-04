@@ -1,6 +1,7 @@
 package edu.icet.service;
 
 import edu.icet.model.dto.OrderDTO;
+import edu.icet.model.dto.OrderProductsDTO;
 import edu.icet.model.entity.Customer;
 import edu.icet.model.entity.Orders;
 import edu.icet.model.entity.OrderDetails;
@@ -28,12 +29,9 @@ public class OrderService {
     public String addOrder(OrderDTO orderDTO) {
         try {
             Customer customer = customerRepository.findById(orderDTO.getCustomerId()).orElse(null);
-            Product product = productRepository.findById(orderDTO.getProductId()).orElse(null);
-            if (customer == null || product == null) {
-                return "Customer or Product doesn't Exist..!";
-            }
-            if ((product.getQty() - orderDTO.getQty()) < 0) {
-                return "Not Enough Quantity..!";
+            List<OrderProductsDTO> orderProductsDTOList = orderDTO.getOrderProductsDTOS();
+            if (customer == null || orderProductsDTOList == null) {
+                return "Customer or Products Invalid or doesn't Exist..!";
             }
             String genOrderId=genOrderId();
             orderRepository.save(new Orders(
@@ -41,16 +39,24 @@ public class OrderService {
                     customer,
                     LocalDate.now()
             ));
+            for (OrderProductsDTO orderProductsDTOTemp:orderProductsDTOList){
+                Product product = productRepository.findById(orderProductsDTOTemp.getProductId()).orElse(null);
+                if(product==null){
+                    return orderProductsDTOTemp.getProductId()+" Product doesn't Exist..!";
+                }
+                if((product.getQty() - orderProductsDTOTemp.getQty()) < 0){
+                    return "Not Enough Quantity in product "+orderProductsDTOTemp.getProductId()+" ..!";
+                }
+                orderDetailsRepository.save(new OrderDetails(
+                        genOrderDetailId(),
+                        orderRepository.findById(genOrderId).orElse(null),
+                        product,
+                        orderProductsDTOTemp.getQty()
+                ));
+                product.setQty(product.getQty() - orderProductsDTOTemp.getQty());
+                productRepository.save(product);
+            }
 
-            orderDetailsRepository.save(new OrderDetails(
-                    genOrderDetailId(),
-                    orderRepository.findById(genOrderId).orElse(null),
-                    product,
-                    orderDTO.getQty()
-
-            ));
-            product.setQty(product.getQty() - orderDTO.getQty());
-            productRepository.save(product);
             return "Order Added Successfully..!";
         } catch (
                 Exception e) {
