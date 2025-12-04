@@ -21,7 +21,9 @@ public class ProductService {
             if(product.getProductId().equals(genaratedId)){
                 genIntId++;
                 genaratedId=String.format("P%03d",genIntId);
-            }else{break;}
+            }else{
+                break;
+            }
         }
         Product product = new Product(
                 genaratedId,
