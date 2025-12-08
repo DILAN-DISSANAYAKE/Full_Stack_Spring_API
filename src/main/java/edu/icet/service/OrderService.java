@@ -27,7 +27,6 @@ public class OrderService {
     private final CustomerRepository customerRepository;
 
     public String addOrder(OrderDTO orderDTO) {
-        try {
             List<OrderProductsDTO> orderProductsDTOList = orderDTO.getOrderProductsDTOS();
             if (orderProductsDTOList == null) {
                 return "Empty Order Try again..!";
@@ -45,10 +44,10 @@ public class OrderService {
             for (OrderProductsDTO orderProductsDTOTemp:orderProductsDTOList){
                 Product product = productRepository.findByProductIdAndIsActiveTrue(orderProductsDTOTemp.getProductId()).orElse(null);
                 if(product==null){
-                    return "Product "+orderProductsDTOTemp.getProductId()+" doesn't Exist Try again..!";
+                    throw new IllegalArgumentException("Product "+orderProductsDTOTemp.getProductId()+" doesn't Exist Try again..!");
                 }
                 if((product.getQty() - orderProductsDTOTemp.getQty()) < 0){
-                    return "Not Enough Quantity in product "+orderProductsDTOTemp.getProductId()+" ..!";
+                    throw new IllegalArgumentException("Not Enough Quantity in product "+orderProductsDTOTemp.getProductId()+" ..!");
                 }
                 orderDetailsRepository.save(new OrderDetails(
                         genOrderDetailId(),
@@ -61,10 +60,6 @@ public class OrderService {
             }
 
             return "Order Added Successfully..!";
-        } catch (
-                Exception e) {
-            return e.getMessage();
-        }
     }
 
     public String genOrderId() {
@@ -103,10 +98,11 @@ public class OrderService {
             List<OrderDetails> orderDetails = orderDetailsRepository.findAllByOrdersId_OrderId(id);
             for (OrderDetails orderDetail:orderDetails){
                 Product product = productRepository.findByProductIdAndIsActiveTrue(orderDetail.getProductId().getProductId()).orElse(null);
-                if (product != null) {
-                    product.setQty(product.getQty()+orderDetail.getQty());
-                    productRepository.save(product);
+                if (product == null) {
+                    throw new IllegalArgumentException("Something went Wrong Try again..!");
                 }
+                product.setQty(product.getQty()+orderDetail.getQty());
+                productRepository.save(product);
             }
             orderRepository.deleteById(id);
             return "Order Deleted Successfully..!";
