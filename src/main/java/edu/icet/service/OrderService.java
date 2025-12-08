@@ -97,4 +97,20 @@ public class OrderService {
         return genaratedId2;
     }
 
+    public String deleteOrder(String id){
+        Orders orders=orderRepository.findById(id).orElse(null);
+        if (orders != null) {
+            List<OrderDetails> orderDetails = orderDetailsRepository.findAllByOrdersId_OrderId(id);
+            for (OrderDetails orderDetail:orderDetails){
+                Product product = productRepository.findByProductIdAndIsActiveTrue(orderDetail.getProductId().getProductId()).orElse(null);
+                if (product != null) {
+                    product.setQty(product.getQty()+orderDetail.getQty());
+                    productRepository.save(product);
+                }
+            }
+            orderRepository.deleteById(id);
+            return "Order Deleted Successfully..!";
+        }
+        return "Order Doesn't Exist..!";
+    }
 }
