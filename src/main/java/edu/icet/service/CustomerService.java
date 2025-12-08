@@ -13,15 +13,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomerService {
     final CustomerRepository customerRepository;
+
     public String addCustomer(CustomerDTO customerDTO) {
-        List<Customer> customers=customerRepository.findAll();
-        String genaratedId="C001";
-        int genIntId=1;
-        for(Customer customer:customers){
-            if(customer.getCustomerId().equals(genaratedId)){
+        List<Customer> customers = customerRepository.findAll();
+        String genaratedId = "C001";
+        int genIntId = 1;
+        for (Customer customer : customers) {
+            if (customer.getCustomerId().equals(genaratedId)) {
                 genIntId++;
-                genaratedId=String.format("C%03d",genIntId);
-            }else{break;}
+                genaratedId = String.format("C%03d", genIntId);
+            } else {
+                break;
+            }
         }
         Customer customer = new Customer(
                 genaratedId,
@@ -36,20 +39,20 @@ public class CustomerService {
     }
 
     public CustomerDTO searchCustomer(String id) {
-        Customer customer=customerRepository.findById(id).orElse(null);
-        if(customer!=null){
+        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(id).orElse(null);
+        if (customer != null) {
             return new CustomerDTO(id, customer.getName(), customer.getAddress(), customer.getContact(), customer.getImg());
-        }else{
-            CustomerDTO customerDTO=new CustomerDTO();
+        } else {
+            CustomerDTO customerDTO = new CustomerDTO();
             customerDTO.setName("No Data");
             return customerDTO;
         }
     }
 
     public List<CustomerDTO> getAllCustomers() {
-        List<Customer> customers=customerRepository.findAll();
-        List<CustomerDTO> customerDTOS=new ArrayList<>();
-        for(Customer customer:customers){
+        List<Customer> customers = customerRepository.findByIsActive(true);
+        List<CustomerDTO> customerDTOS = new ArrayList<>();
+        for (Customer customer : customers) {
             customerDTOS.add(new CustomerDTO(
                     customer.getCustomerId(),
                     customer.getName(),
@@ -62,29 +65,26 @@ public class CustomerService {
     }
 
     public String updateCustomer(CustomerDTO customerDTO, String id) {
-        List<Customer> customers=customerRepository.findAll();
-        for(Customer customer:customers){
-           if(customer.getCustomerId().equals(id)){
-               customerRepository.save(new Customer(
-                  id,
-                  customerDTO.getName(),
-                  customerDTO.getAddress(),
-                  customerDTO.getContact(),
-                  customerDTO.getImg()
-               ));
-               return "Customer Updated Successfully..!";
-           }
+        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(id).orElse(null);
+        if (customer != null) {
+            customerRepository.save(new Customer(
+                    id,
+                    customerDTO.getName(),
+                    customerDTO.getAddress(),
+                    customerDTO.getContact(),
+                    customerDTO.getImg()
+            ));
+            return "Customer Updated Successfully..!";
         }
         return "Customer Doesn't Exist..!";
     }
 
     public String deleteCustomer(String id) {
-        List<Customer> customers=customerRepository.findAll();
-        for(Customer customer:customers){
-            if(customer.getCustomerId().equals(id)){
-                customerRepository.deleteById(id);
-                return "Customer Deleted Successfully..!";
-            }
+        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(id).orElse(null);
+        if (customer != null) {
+            customer.setActive(false);
+            customerRepository.save(customer);
+            return "Customer Deleted Successfully..!";
         }
         return "Customer Doesn't Exist..!";
     }

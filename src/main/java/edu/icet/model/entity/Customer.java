@@ -7,7 +7,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
@@ -19,4 +18,13 @@ public class Customer {
     private String address;
     private String contact;
     private String img;
+    private boolean isActive=true;
+
+    public Customer(String customerId, String name, String address, String contact, String img) {
+        this.customerId = customerId;
+        this.name = name;
+        this.address = address;
+        this.contact = contact;
+        this.img = img;
+    }
 }

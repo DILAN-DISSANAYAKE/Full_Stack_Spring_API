@@ -28,10 +28,13 @@ public class OrderService {
 
     public String addOrder(OrderDTO orderDTO) {
         try {
-            Customer customer = customerRepository.findById(orderDTO.getCustomerId()).orElse(null);
             List<OrderProductsDTO> orderProductsDTOList = orderDTO.getOrderProductsDTOS();
-            if (customer == null || orderProductsDTOList == null) {
-                return "Customer or Products Invalid or doesn't Exist..!";
+            if (orderProductsDTOList == null) {
+                return "Empty Order Try again..!";
+            }
+            Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(orderDTO.getCustomerId()).orElse(null);
+            if (customer == null) {
+                return "Customer doesn't Exist..!";
             }
             String genOrderId=genOrderId();
             orderRepository.save(new Orders(
@@ -40,9 +43,9 @@ public class OrderService {
                     LocalDate.now()
             ));
             for (OrderProductsDTO orderProductsDTOTemp:orderProductsDTOList){
-                Product product = productRepository.findById(orderProductsDTOTemp.getProductId()).orElse(null);
+                Product product = productRepository.findByProductIdAndIsActiveTrue(orderProductsDTOTemp.getProductId()).orElse(null);
                 if(product==null){
-                    return orderProductsDTOTemp.getProductId()+" Product doesn't Exist..!";
+                    return "Product "+orderProductsDTOTemp.getProductId()+" doesn't Exist Try again..!";
                 }
                 if((product.getQty() - orderProductsDTOTemp.getQty()) < 0){
                     return "Not Enough Quantity in product "+orderProductsDTOTemp.getProductId()+" ..!";
@@ -93,4 +96,5 @@ public class OrderService {
         }
         return genaratedId2;
     }
+
 }

@@ -7,7 +7,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @Entity
@@ -19,4 +18,13 @@ public class Product {
     private double price;
     private int qty;
     private String img;
+    private boolean isActive=true;
+
+    public Product(String productId, String name, double price, int qty, String img) {
+        this.productId = productId;
+        this.name = name;
+        this.price = price;
+        this.qty = qty;
+        this.img = img;
+    }
 }

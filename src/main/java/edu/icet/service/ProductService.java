@@ -38,7 +38,7 @@ public class ProductService {
     }
 
     public ProductDTO searchProduct(String id) {
-        Product product=productRepository.findById(id).orElse(null);
+        Product product=productRepository.findByProductIdAndIsActiveTrue(id).orElse(null);
         if(product!=null){
             return new ProductDTO(id, product.getName(), product.getPrice(), product.getQty(), product.getImg());
         }else{
@@ -49,7 +49,7 @@ public class ProductService {
     }
 
     public List<ProductDTO> getAllProducts() {
-        List<Product> products=productRepository.findAll();
+        List<Product> products=productRepository.findByIsActive(true);
         List<ProductDTO> productsDTOs=new ArrayList<>();
         for(Product product:products){
             productsDTOs.add(new ProductDTO(
@@ -64,9 +64,8 @@ public class ProductService {
     }
 
     public String updateProduct(ProductDTO productDTO, String id) {
-        List<Product> products=productRepository.findAll();
-        for(Product product:products){
-           if(product.getProductId().equals(id)){
+        Product product=productRepository.findByProductIdAndIsActiveTrue(id).orElse(null);
+           if(product != null){
                productRepository.save(new Product(
                   id,
                   productDTO.getName(),
@@ -76,18 +75,16 @@ public class ProductService {
                ));
                return "Product Updated Successfully..!";
            }
-        }
         return "Product Doesn't Exist..!";
     }
 
     public String deleteProduct(String id) {
-        List<Product> products=productRepository.findAll();
-        for(Product product:products){
-            if(product.getProductId().equals(id)){
-                productRepository.deleteById(id);
+        Product product=productRepository.findByProductIdAndIsActiveTrue(id).orElse(null);
+            if(product != null){
+                product.setActive(false);
+                productRepository.save(product);
                 return "Product Deleted Successfully..!";
             }
-        }
         return "Product Doesn't Exist..!";
     }
 }
