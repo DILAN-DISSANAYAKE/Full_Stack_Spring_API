@@ -1,91 +1,18 @@
 package edu.icet.service;
 
 import edu.icet.model.dto.CustomerDTO;
-import edu.icet.model.entity.Customer;
-import edu.icet.repository.CustomerRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@RequiredArgsConstructor
-public class CustomerService {
-    final CustomerRepository customerRepository;
+public interface CustomerService {
 
-    public String addCustomer(CustomerDTO customerDTO) {
-        List<Customer> customers = customerRepository.findAll();
-        String genaratedId = "C001";
-        int genIntId = 1;
-        for (Customer customer : customers) {
-            if (customer.getCustomerId().equals(genaratedId)) {
-                genIntId++;
-                genaratedId = String.format("C%03d", genIntId);
-            } else {
-                break;
-            }
-        }
-        Customer customer = new Customer(
-                genaratedId,
-                customerDTO.getName(),
-                customerDTO.getAddress(),
-                customerDTO.getContact(),
-                customerDTO.getImg()
-        );
+    String addCustomer(CustomerDTO customerDTO);
 
-        customerRepository.save(customer);
-        return "Customer Added Successfully..!";
-    }
+    CustomerDTO searchCustomer(String id);
 
-    public CustomerDTO searchCustomer(String id) {
-        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(id).orElse(null);
-        if (customer != null) {
-            return new CustomerDTO(id, customer.getName(), customer.getAddress(), customer.getContact(), customer.getImg());
-        } else {
-            CustomerDTO customerDTO = new CustomerDTO();
-            customerDTO.setName("No Data");
-            return customerDTO;
-        }
-    }
+    List<CustomerDTO> getAllCustomers();
 
-    public List<CustomerDTO> getAllCustomers() {
-        List<Customer> customers = customerRepository.findByIsActive(true);
-        List<CustomerDTO> customerDTOS = new ArrayList<>();
-        for (Customer customer : customers) {
-            customerDTOS.add(new CustomerDTO(
-                    customer.getCustomerId(),
-                    customer.getName(),
-                    customer.getAddress(),
-                    customer.getContact(),
-                    customer.getImg()
-            ));
-        }
-        return customerDTOS;
-    }
+    String updateCustomer(CustomerDTO customerDTO, String id);
 
-    public String updateCustomer(CustomerDTO customerDTO, String id) {
-        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(id).orElse(null);
-        if (customer != null) {
-            customerRepository.save(new Customer(
-                    id,
-                    customerDTO.getName(),
-                    customerDTO.getAddress(),
-                    customerDTO.getContact(),
-                    customerDTO.getImg()
-            ));
-            return "Customer Updated Successfully..!";
-        }
-        return "Customer Doesn't Exist..!";
-    }
-
-    public String deleteCustomer(String id) {
-        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(id).orElse(null);
-        if (customer != null) {
-            customer.setActive(false);
-            customerRepository.save(customer);
-            return "Customer Deleted Successfully..!";
-        }
-        return "Customer Doesn't Exist..!";
-    }
+    String deleteCustomer(String id);
 }
