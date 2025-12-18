@@ -54,6 +54,7 @@ public class OrderServiceImp implements OrderService {
                         genOrderDetailId(),
                         orderRepository.findById(genOrderId).orElse(null),
                         product,
+                        product.getPrice(),
                         orderProductsDTOTemp.getQty()
                 ));
                 product.setQty(product.getQty() - orderProductsDTOTemp.getQty());
