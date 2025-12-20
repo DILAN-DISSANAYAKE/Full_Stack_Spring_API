@@ -27,6 +27,7 @@ public class OrderServiceImp implements OrderService {
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
 
+    @Override
     public String addOrder(OrderDTO orderDTO) {
             List<OrderProductsDTO> orderProductsDTOList = orderDTO.getOrderProductsDTOS();
             if (orderProductsDTOList == null) {
@@ -94,6 +95,7 @@ public class OrderServiceImp implements OrderService {
         return genaratedId2;
     }
 
+    @Override
     public String deleteOrder(String id){
         Orders orders=orderRepository.findById(id).orElse(null);
         if (orders != null) {
@@ -110,5 +112,10 @@ public class OrderServiceImp implements OrderService {
             return "Order Deleted Successfully..!";
         }
         return "Order Doesn't Exist..!";
+    }
+
+    @Override
+    public OrderDTO searchOrder(String id) {
+        return null;
     }
 }

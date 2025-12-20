@@ -6,4 +6,6 @@ public interface OrderService {
     String addOrder(OrderDTO orderDTO);
 
     String deleteOrder(String id);
+
+    OrderDTO searchOrder(String id);
 }
