@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,40 +30,40 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public String addOrder(OrderDTO orderDTO) {
-            List<OrderProductsDTO> orderProductsDTOList = orderDTO.getOrderProductsDTOS();
-            if (orderProductsDTOList == null) {
-                return "Empty Order Try again..!";
+        List<OrderProductsDTO> orderProductsDTOList = orderDTO.getOrderProductsDTOS();
+        if (orderProductsDTOList == null) {
+            return "Empty Order Try again..!";
+        }
+        Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(orderDTO.getCustomerId()).orElse(null);
+        if (customer == null) {
+            return "Customer doesn't Exist..!";
+        }
+        String genOrderId = genOrderId();
+        orderRepository.save(new Orders(
+                genOrderId,
+                customer,
+                LocalDate.now()
+        ));
+        for (OrderProductsDTO orderProductsDTOTemp : orderProductsDTOList) {
+            Product product = productRepository.findByProductIdAndIsActiveTrue(orderProductsDTOTemp.getProductId()).orElse(null);
+            if (product == null) {
+                throw new IllegalArgumentException("Product " + orderProductsDTOTemp.getProductId() + " doesn't Exist Try again..!");
             }
-            Customer customer = customerRepository.findByCustomerIdAndIsActiveTrue(orderDTO.getCustomerId()).orElse(null);
-            if (customer == null) {
-                return "Customer doesn't Exist..!";
+            if ((product.getQty() - orderProductsDTOTemp.getQty()) < 0) {
+                throw new IllegalArgumentException("Not Enough Quantity in product " + orderProductsDTOTemp.getProductId() + " ..!");
             }
-            String genOrderId=genOrderId();
-            orderRepository.save(new Orders(
-                    genOrderId,
-                    customer,
-                    LocalDate.now()
+            orderDetailsRepository.save(new OrderDetails(
+                    genOrderDetailId(),
+                    orderRepository.findById(genOrderId).orElse(null),
+                    product,
+                    product.getPrice(),
+                    orderProductsDTOTemp.getQty()
             ));
-            for (OrderProductsDTO orderProductsDTOTemp:orderProductsDTOList){
-                Product product = productRepository.findByProductIdAndIsActiveTrue(orderProductsDTOTemp.getProductId()).orElse(null);
-                if(product==null){
-                    throw new IllegalArgumentException("Product "+orderProductsDTOTemp.getProductId()+" doesn't Exist Try again..!");
-                }
-                if((product.getQty() - orderProductsDTOTemp.getQty()) < 0){
-                    throw new IllegalArgumentException("Not Enough Quantity in product "+orderProductsDTOTemp.getProductId()+" ..!");
-                }
-                orderDetailsRepository.save(new OrderDetails(
-                        genOrderDetailId(),
-                        orderRepository.findById(genOrderId).orElse(null),
-                        product,
-                        product.getPrice(),
-                        orderProductsDTOTemp.getQty()
-                ));
-                product.setQty(product.getQty() - orderProductsDTOTemp.getQty());
-                productRepository.save(product);
-            }
+            product.setQty(product.getQty() - orderProductsDTOTemp.getQty());
+            productRepository.save(product);
+        }
 
-            return "Order Added Successfully..!";
+        return "Order Added Successfully..!";
     }
 
     public String genOrderId() {
@@ -96,16 +97,16 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public String deleteOrder(String id){
-        Orders orders=orderRepository.findById(id).orElse(null);
+    public String deleteOrder(String id) {
+        Orders orders = orderRepository.findById(id).orElse(null);
         if (orders != null) {
             List<OrderDetails> orderDetails = orderDetailsRepository.findAllByOrdersId_OrderId(id);
-            for (OrderDetails orderDetail:orderDetails){
+            for (OrderDetails orderDetail : orderDetails) {
                 Product product = productRepository.findByProductIdAndIsActiveTrue(orderDetail.getProductId().getProductId()).orElse(null);
                 if (product == null) {
                     throw new IllegalArgumentException("Something went Wrong Try again..!");
                 }
-                product.setQty(product.getQty()+orderDetail.getQty());
+                product.setQty(product.getQty() + orderDetail.getQty());
                 productRepository.save(product);
             }
             orderRepository.deleteById(id);
@@ -116,6 +117,28 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public OrderDTO searchOrder(String id) {
+        Orders orders = orderRepository.findById(id).orElse(null);
+        if (orders != null) {
+            List<OrderDetails> orderDetailsList=orders.getOrderDetailsList();
+            List<OrderProductsDTO> orderProductsDTOList=new ArrayList<>();
+            double totalPrice=0;
+            for (OrderDetails orderDetails:orderDetailsList){
+                totalPrice+=orderDetails.getPrice();
+                orderProductsDTOList.add(new OrderProductsDTO(
+                        orderDetails.getProductId().getProductId(),
+                        orderDetails.getQty(),
+                        orderDetails.getPrice()
+                ));
+            }
+            return new OrderDTO(
+                    orders.getOrderId(),
+                    orders.getCustomerId().getCustomerId(),
+                    orders.getOrderDate(),
+                    totalPrice,
+                    orderProductsDTOList
+                    );
+        }
+
         return null;
     }
 }
