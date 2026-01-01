@@ -12,7 +12,6 @@ import java.util.List;
 @ToString
 public class OrderDTO {
     private String orderId;
-    private String orderDetailsId;
     private String customerId;
     private LocalDate localDate;
     private double totalPrice;
