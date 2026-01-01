@@ -2,7 +2,6 @@ package edu.icet.controller;
 
 import edu.icet.model.dto.OrderDTO;
 import edu.icet.service.OrderService;
-import edu.icet.service.imp.OrderServiceImp;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,11 +22,16 @@ public class OrderController {
 
     @GetMapping("/delete/{id}")
     public String deleteOrder(@PathVariable("id") String id) {
-        return orderService.deleteOrder(id);
+        try {
+            return orderService.deleteOrder(id);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
 
     }
+
     @GetMapping("/search/{id}")
-    public OrderDTO searchOrder(@PathVariable("id") String id){
+    public OrderDTO searchOrder(@PathVariable("id") String id) {
         return orderService.searchOrder(id);
     }
 
