@@ -143,6 +143,11 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public List<OrderDTO> getAllOrders() {
-        return null;
+        List<Orders> orders=orderRepository.findAll();
+        List<OrderDTO> orderDTOS=new ArrayList<>();
+        for (Orders order: orders){
+            orderDTOS.add(searchOrder(order.getOrderId()));
+        }
+        return orderDTOS;
     }
 }
