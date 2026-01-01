@@ -140,4 +140,9 @@ public class OrderServiceImp implements OrderService {
         }
         return null;
     }
+
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        return null;
+    }
 }
