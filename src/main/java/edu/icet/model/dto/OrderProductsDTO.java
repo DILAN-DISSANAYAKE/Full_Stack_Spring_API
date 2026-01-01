@@ -10,4 +10,5 @@ import lombok.*;
 public class OrderProductsDTO {
     private String productId;
     private int qty;
+    private double price;
 }
