@@ -5,6 +5,8 @@ import edu.icet.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/order")
@@ -33,6 +35,11 @@ public class OrderController {
     @GetMapping("/search/{id}")
     public OrderDTO searchOrder(@PathVariable("id") String id) {
         return orderService.searchOrder(id);
+    }
+
+    @GetMapping("/all")
+    public List<OrderDTO> getAllOrders(){
+        return orderService.getAllOrders();
     }
 
 }
